@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ریاضی‌ورزی</title>
+    
+    <style>
+        @font-face {
+            font-family: 'Vazirmatn';
+            src: url('fonts/Vazirmatn-Regular.woff2') format('woff2');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'Vazirmatn';
+            src: url('fonts/Vazirmatn-Bold.woff2') format('woff2');
+            font-weight: bold;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(to bottom, #fde8e9 100vh, #181819 100vh);
+            background-attachment: scroll;
+            min-height: 100vh;
+            font-family: 'Vazirmatn', 'Tahoma', sans-serif;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #loadingOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #fde8e9;
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.5s ease;
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        #loadingOverlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 6px solid rgba(179, 65, 75, 0.2);
+            border-top-color: #b3414b;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .header {
+            padding: clamp(1rem, 5vw, 3rem) 1.5rem clamp(0.5rem, 2vw, 1rem);
+            text-align: center;
+        }
+
+        .main-title {
+            font-family: 'Vazirmatn', 'Tahoma', sans-serif;
+            font-size: clamp(3rem, 15vw, 8.5rem);
+            font-weight: normal;
+            color: #000000;
+            line-height: 1.2;
+            word-break: break-word;
+        }
+
+        .main-content {
+            flex: 1;
+        }
+
+        #overlayContainer {
+            position: relative;
+            width: 100%;
+            margin: 0;
+        }
+
+        #bottomImage {
+            width: 100%;
+            display: block;
+            margin: 0;
+            border-radius: 0;
+            border: none;
+            box-shadow: none;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .overlap-section {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            background-color: #181819;
+            color: #e0e0e0;
+            padding: 3rem 1.5rem clamp(2rem, 4vw, 3rem);
+            text-align: center;
+            z-index: 2;
+        }
+
+        .section-title {
+            font-family: 'Vazirmatn', 'Tahoma', sans-serif;
+            font-size: clamp(2rem, 6vw, 3rem);
+            font-weight: bold;
+            color: #ffffff;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-text {
+            font-family: 'Vazirmatn', 'Tahoma', sans-serif;
+            font-size: clamp(1rem, 2.5vw, 1.25rem);
+            line-height: 2;
+            max-width: 800px;
+            margin: 0 auto;
+            color: #cccccc;
+            text-align: justify;
+        }
+
+        .social-links {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1.2rem 2rem;
+            margin-top: 1rem;
+        }
+
+        .social-links a {
+            color: #dd8888;
+            text-decoration: none;
+            font-size: 1.1rem;
+            transition: color 0.2s;
+        }
+
+        .social-links a:hover {
+            color: #ffffff;
+        }
+
+        .copyright-footer {
+            padding: 1.2rem 1rem;
+            text-align: center;
+            font-size: clamp(0.7rem, 2vw, 0.85rem);
+            color: #aaaaaa;
+            background-color: #181819;
+        }
+
+        .copyright-footer a {
+            color: #dd8888;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .copyright-footer a:hover {
+            color: #ffffff;
+            opacity: 0.8;
+        }
+
+        .floating-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #181819;
+            color: #ffffff;
+            border: 2px solid #444;
+            cursor: pointer;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            user-select: none;
+        }
+
+        .floating-btn:hover {
+            background-color: #2a2a2b;
+            transform: scale(1.1);
+        }
+
+        .floating-btn:active {
+            transform: scale(0.95);
+        }
+
+        .floating-btn::before,
+        .floating-btn::after {
+            content: "";
+            position: absolute;
+            background-color: #fff;
+            transition: transform 0.3s ease;
+        }
+
+        .floating-btn::before {
+            width: 20px;
+            height: 2px;
+        }
+
+        .floating-btn::after {
+            width: 2px;
+            height: 20px;
+        }
+
+        .floating-btn.open::before {
+            transform: rotate(45deg);
+        }
+        .floating-btn.open::after {
+            transform: rotate(45deg);
+        }
+
+        .nav-panel {
+            position: fixed;
+            bottom: 80px;
+            left: 20px;
+            background-color: #181819;
+            border-radius: 8px;
+            padding: 12px 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+            z-index: 999;
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            min-width: 180px;
+            border: 1px solid #333;
+            transform-origin: bottom left;
+            animation: fadeInUp 0.2s ease;
+        }
+
+        .nav-panel.active {
+            display: flex;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .nav-panel a {
+            color: #dd8888;
+            text-decoration: none;
+            font-size: 0.9rem;
+            padding: 5px 0;
+            transition: color 0.2s;
+            display: block;
+            cursor: pointer;
+        }
+
+        .nav-panel a:hover {
+            color: #ffffff;
+        }
+
+        .nav-panel::after {
+            content: "";
+            position: absolute;
+            bottom: -8px;
+            left: 20px;
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 8px solid #181819;
+        }
+
+        @media (max-width: 360px) {
+            .overlap-section {
+                padding: 2rem 1rem;
+            }
+            .floating-btn {
+                width: 44px;
+                height: 44px;
+                bottom: 15px;
+                left: 15px;
+            }
+            .nav-panel {
+                bottom: 70px;
+                left: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loadingOverlay">
+        <div class="spinner"></div>
+    </div>
+
+    <header class="header">
+        <h1 class="main-title">ریاضی‌ورزی.</h1>
+    </header>
+
+    <div class="main-content"></div>
+
+    <div id="overlayContainer">
+        <img 
+            id="bottomImage" 
+            alt="تصویر پایین صفحه"
+        >
+
+        <section id="whySection" class="overlap-section">
+            <h2 class="section-title">چرا ریاضی‌ورزی؟</h2>
+            <p class="section-text">
+                لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ، و با استفاده از طراحان گرافیک است، چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است، و برای شرایط فعلی تکنولوژی مورد نیاز، و کاربردهای متنوع با هدف بهبود ابزارهای کاربردی می باشد، کتابهای زیادی در شصت و سه درصد گذشته حال و آینده، شناخت فراوان جامعه و متخصصان را می طلبد، تا با نرم افزارها شناخت بیشتری را برای طراحان رایانه ای علی الخصوص طراحان خلاقی، و فرهنگ پیشرو در زبان فارسی ایجاد کرد، در این صورت می توان امید داشت که تمام و دشواری موجود در ارائه راهکارها، و شرایط سخت تایپ به پایان رسد و زمان مورد نیاز شامل حروفچینی دستاوردهای اصلی، و جوابگوی سوالات پیوسته اهل دنیای موجود طراحی اساسا مورد استفاده قرار گیرد.
+            </p>
+        </section>
+
+        <section id="whatSection" class="overlap-section">
+            <h2 class="section-title">هدف چیست؟</h2>
+            <p class="section-text">
+                لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ، و با استفاده از طراحان گرافیک است، چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است، و برای شرایط فعلی تکنولوژی مورد نیاز، و کاربردهای متنوع با هدف بهبود ابزارهای کاربردی می باشد.
+            </p>
+        </section>
+
+        <section id="roondSection" class="overlap-section">
+            <h2 class="section-title">روند جلسات</h2>
+            <p class="section-text">
+                لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ، و با استفاده از طراحان گرافیک است، چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است، و برای شرایط فعلی تکنولوژی مورد نیاز، و کاربردهای متنوع با هدف بهبود ابزارهای کاربردی می باشد.
+            </p>
+        </section>
+
+        <section id="keySection" class="overlap-section">
+            <h2 class="section-title">کی و کجا؟</h2>
+<p class="section-text">
+    زنجان، سعدی وسط، ابتدای زینبیه غربی، کوچه علیمردان، ساختمان جم، واحد ۸(طبقه‌ی آخر) و در این 
+    <a href="https://jitsi.bokhary.fun/DifficultLeadersDesertInevitably" style="text-decoration: none; color: #dd8888;">لینک</a>.
+    <br/>
+    شنبه ها ساعت ۹:۳۰.
+</p>
+        </section>
+
+        <section id="joinSection" class="overlap-section">
+            <h2 class="section-title">به ما بپیوندید</h2>
+            <div class="social-links">
+                <a href="#" target="_blank" rel="noopener">Telegram</a>
+                <a href="#" target="_blank" rel="noopener">DeltaChat</a>
+                <a href="#" target="_blank" rel="noopener">Matrix</a>
+                <a href="#" target="_blank" rel="noopener">Bale</a>
+            </div>
+        </section>
+    </div>
+
+    <footer class="copyright-footer">
+        Licensed under <a href="https://www.gnu.org/licenses/gpl-2.0.html" target="_blank" rel="noopener">GPL v2</a> | 
+        <a href="https://github.com/yourusername/riyazi-varzi" target="_blank" rel="noopener">GitHub Repository</a>
+    </footer>
+
+    <button id="floatingBtn" class="floating-btn" aria-label="باز کردن منو"></button>
+    <div id="navPanel" class="nav-panel">
+        <a data-action="top">ریاضی‌ورزی.</a>
+        <a data-target="whySection">چرا ریاضی‌ورزی؟</a>
+        <a data-target="whatSection">هدف چیست؟</a>
+        <a data-target="roondSection">روند جلسات</a>
+        <a data-target="keySection">کی و کجا؟</a>
+        <a data-target="joinSection">به ما بپیوندید</a>
+        <a href="sessions">جلسات</a>
+    </div>
+
+    <script>
+        (function() {
+            const overlay = document.getElementById('overlayContainer');
+            const img = document.getElementById('bottomImage');
+            const sections = [
+                document.getElementById('whySection'),
+                document.getElementById('whatSection'),
+                document.getElementById('roondSection'),
+                document.getElementById('keySection'),
+                document.getElementById('joinSection')
+            ];
+            const loadingOverlay = document.getElementById('loadingOverlay');
+
+            const PHONE_WIDTH = 768;
+            const IMAGE_DESKTOP = 'images/bottom-image.png';
+            const IMAGE_MOBILE = 'images/bottom-image-mobile.png';
+            const ROW_BG_DESKTOP = 1334;
+            const ROW_BG_MOBILE = 1800;
+            const ROW_SECTION_DESKTOP = 9300;
+            const ROW_SECTION_MOBILE = 8000;
+            const SECTION_GAP = 350;
+            const FOOTER_GAP = 295;       // 3rem ≈ 48px space before footer
+
+            let currentImage = null;
+            let lastLayoutWidth = 0;
+            const sectionHeights = [];
+
+            function isPhone() { return window.innerWidth <= PHONE_WIDTH; }
+            function getCurrentImage() { return isPhone() ? IMAGE_MOBILE : IMAGE_DESKTOP; }
+            function getBgTargetRow() { return isPhone() ? ROW_BG_MOBILE : ROW_BG_DESKTOP; }
+            function getSectionTargetRow() { return isPhone() ? ROW_SECTION_MOBILE : ROW_SECTION_DESKTOP; }
+
+            function measureSectionHeight(section) {
+                const prevPos = section.style.position;
+                const prevTop = section.style.top;
+                const prevVis = section.style.visibility;
+
+                section.style.position = 'static';
+                section.style.visibility = 'hidden';
+                section.style.top = 'auto';
+                const height = section.offsetHeight;
+
+                section.style.position = prevPos;
+                section.style.top = prevTop;
+                section.style.visibility = prevVis;
+                return height;
+            }
+
+            function applyLayout() {
+                if (!img.complete || img.naturalWidth === 0) return;
+
+                const vw = window.innerWidth;
+                const vh = window.innerHeight;
+                const naturalW = img.naturalWidth;
+                const naturalH = img.naturalHeight;
+                const scale = vw / naturalW;
+                const H_rend = naturalH * scale;
+
+                const bgRow = getBgTargetRow();
+                const sectionRow = getSectionTargetRow();
+
+                const offsetBg = bgRow * scale;
+                const offsetSection = sectionRow * scale;
+
+                overlay.style.marginTop = '0';
+                overlay.style.marginBottom = '0';
+                const currentTop = overlay.getBoundingClientRect().top;
+                overlay.style.marginTop = (vh - offsetBg - currentTop) + 'px';
+
+                overlay.style.marginBottom = FOOTER_GAP + 'px';
+
+                for (let i = 0; i < sections.length; i++) {
+                    sectionHeights[i] = measureSectionHeight(sections[i]);
+                }
+
+                let currentTopPos = offsetSection;
+                for (let i = 0; i < sections.length; i++) {
+                    sections[i].style.top = currentTopPos + 'px';
+                    currentTopPos += sectionHeights[i] + SECTION_GAP;
+                }
+
+                const sumHeights = sectionHeights.reduce((sum, h) => sum + h, 0);
+                const totalSectionsHeight = sumHeights + (sections.length - 1) * SECTION_GAP;
+                overlay.style.height = Math.max(H_rend, offsetSection + totalSectionsHeight) + 'px';
+
+                img.style.opacity = '1';
+                lastLayoutWidth = vw;
+
+                loadingOverlay.classList.add('hidden');
+                loadingOverlay.addEventListener('transitionend', function() {
+                    loadingOverlay.style.display = 'none';
+                }, { once: true });
+            }
+
+            function loadCorrectImage() {
+                const needed = getCurrentImage();
+                if (needed !== currentImage) {
+                    currentImage = needed;
+                    img.style.opacity = '0';
+                    loadingOverlay.classList.remove('hidden');
+                    loadingOverlay.style.display = 'flex';
+                    img.src = needed;
+                } else if (img.complete && img.naturalWidth && lastLayoutWidth === 0) {
+                    applyLayout();
+                }
+            }
+
+            img.addEventListener('load', function() {
+                lastLayoutWidth = 0;
+                applyLayout();
+            });
+
+            let resizeTimer;
+            window.addEventListener('resize', function() {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(function() {
+                    const newWidth = window.innerWidth;
+                    if (newWidth === lastLayoutWidth) return;
+                    loadCorrectImage();
+                }, 100);
+            });
+
+            window.addEventListener('orientationchange', function() {
+                setTimeout(function() {
+                    const newWidth = window.innerWidth;
+                    if (newWidth !== lastLayoutWidth) {
+                        loadCorrectImage();
+                    }
+                }, 150);
+            });
+
+            loadCorrectImage();
+
+            // ---- Floating button + navigation panel ----
+            (function() {
+                const btn = document.getElementById('floatingBtn');
+                const panel = document.getElementById('navPanel');
+
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const isOpen = panel.classList.contains('active');
+                    if (isOpen) {
+                        panel.classList.remove('active');
+                        btn.classList.remove('open');
+                    } else {
+                        panel.classList.add('active');
+                        btn.classList.add('open');
+                    }
+                });
+
+                document.addEventListener('click', function(e) {
+                    if (!btn.contains(e.target) && !panel.contains(e.target)) {
+                        panel.classList.remove('active');
+                        btn.classList.remove('open');
+                    }
+                });
+
+                panel.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                });
+
+                panel.addEventListener('click', function(e) {
+                    const link = e.target.closest('a');
+                    if (!link) return;
+
+                    const action = link.getAttribute('data-action');
+                    const targetId = link.getAttribute('data-target');
+
+                    if (action === 'top') {
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    } else if (targetId) {
+                        const section = document.getElementById(targetId);
+                        if (section) {
+                            const containerRect = overlay.getBoundingClientRect();
+                            const containerTop = containerRect.top + window.pageYOffset;
+                            const sectionTop = containerTop + section.offsetTop;
+                            const sectionHeight = section.offsetHeight;
+                            const viewportHeight = window.innerHeight;
+
+                            const targetScroll = sectionTop - (viewportHeight / 2) + (sectionHeight / 2);
+                            window.scrollTo({ top: targetScroll, behavior: 'smooth' });
+                        }
+                    }
+
+                    panel.classList.remove('active');
+                    btn.classList.remove('open');
+                });
+            })();
+        })();
+    </script>
+</body>
+</html>

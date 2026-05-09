@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>جلسات</title>
+    
+    <style>
+        @font-face {
+            font-family: 'Vazirmatn';
+            src: url('fonts/Vazirmatn-Regular.woff2') format('woff2');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'Vazirmatn';
+            src: url('fonts/Vazirmatn-Bold.woff2') format('woff2');
+            font-weight: bold;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #fde8e9;
+            min-height: 100vh;
+            font-family: 'Vazirmatn', 'Tahoma', sans-serif;
+            direction: rtl;
+            color: #e0e0e0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 2rem 1.5rem 0;
+            flex: 1;               /* pushes footer down if content is short */
+        }
+
+        .session-title {
+            font-size: clamp(2rem, 6vw, 3.5rem);
+            font-weight: bold;
+            color: #000;
+            text-align: center;
+            margin-bottom: 2.5rem;
+            line-height: 1.4;
+            word-break: break-word;   /* long title wraps on small screens */
+        }
+
+        .video-section {
+            background-color: #181819;
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .video-section h2 {
+            font-size: clamp(1.3rem, 4vw, 2rem);
+            color: #ffffff;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .video-placeholder {
+            background-color: #2a2a2b;
+            border: 2px dashed #444;
+            border-radius: 6px;
+            aspect-ratio: 16 / 9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #aaaaaa;
+            font-size: 1.2rem;
+            flex-direction: column;
+            gap: 0.5rem;
+            text-align: center;
+            padding: 1rem;
+        }
+
+        .video-placeholder::before {
+            content: "▶";
+            font-size: clamp(2rem, 10vw, 3rem);
+            opacity: 0.6;
+        }
+
+        .files-section {
+            background-color: #181819;
+            border-radius: 8px;
+            padding: 1.5rem 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .files-section details {
+            width: 100%;
+        }
+
+        .files-section summary {
+            font-size: clamp(1.3rem, 3vw, 1.8rem);
+            font-weight: bold;
+            color: #ffffff;
+            cursor: pointer;
+            list-style: none;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #333;
+            user-select: none;
+        }
+
+        .files-section summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .files-section summary::after {
+            content: "▼";
+            font-size: 0.8rem;
+            transition: transform 0.2s ease;
+            color: #dd8888;
+        }
+
+        .files-section details[open] summary::after {
+            transform: rotate(180deg);
+        }
+
+        .files-list {
+            list-style: none;
+            margin-top: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .files-list li {
+            padding: 0.7rem 1rem;
+            background-color: #222;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        .files-list li:hover {
+            background-color: #2a2a2b;
+        }
+
+        .files-list a {
+            color: #dd8888;
+            text-decoration: none;
+            font-size: clamp(0.95rem, 2.5vw, 1.05rem);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            word-break: break-word;
+        }
+
+        .files-list a:hover {
+            color: #ffffff;
+        }
+
+        .files-list a::before {
+            content: "📄";
+            font-size: 1.3rem;
+            flex-shrink: 0;
+        }
+
+        /* Home button – fixed, bottom‑left */
+        .home-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #181819;
+            color: #ffffff;
+            border: 2px solid #444;
+            text-decoration: none;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            user-select: none;
+        }
+
+        .home-btn:hover {
+            background-color: #2a2a2b;
+            transform: scale(1.1);
+        }
+
+        .home-btn:active {
+            transform: scale(0.95);
+        }
+
+        .copyright-footer {
+            padding: 1.2rem 1rem;
+            text-align: center;
+            font-size: clamp(0.7rem, 2vw, 0.85rem);
+            color: #aaaaaa;
+            background-color: #181819;
+            margin-top: auto;   /* stays at bottom when content is short */
+        }
+
+        .copyright-footer a {
+            color: #dd8888;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .copyright-footer a:hover {
+            color: #ffffff;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            .container {
+                padding: 1.5rem 1rem 0;
+            }
+            .video-section,
+            .files-section {
+                padding: 1.5rem 1rem;
+            }
+            .home-btn {
+                width: 44px;
+                height: 44px;
+                bottom: 15px;
+                left: 15px;
+                font-size: 1.5rem;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .session-title {
+                font-size: 1.8rem;
+            }
+            .files-list li {
+                padding: 0.6rem 0.8rem;
+            }
+            .files-list a {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="session-title">جلسه ۰ام؛ معرفی و تاریخ</h1>
+
+        <section class="video-section">
+            <h2>ویدیو جلسه</h2>
+            <div class="video-placeholder">
+                از این جلسه ویدیو موجود نیست.
+            </div>
+        </section>
+
+        <section class="files-section">
+            <details>
+                <summary>فایل‌ها</summary>
+                <ul class="files-list">
+                    <li><a href="files/session0-slides.pdf" download>اسلایدهای جلسه (PDF)</a></li>
+                    <li><a href="files/session0-notes.pdf" download>یادداشت‌های تکمیلی (PDF)</a></li>
+                    <li><a href="files/session0-source.zip" download>کدهای نمونه (ZIP)</a></li>
+                    <li><a href="files/session0-resources.pdf" download>منابع بیشتر (PDF)</a></li>
+                </ul>
+            </details>
+        </section>
+    </div>
+
+    <footer class="copyright-footer">
+        Licensed under <a href="https://www.gnu.org/licenses/gpl-2.0.html" target="_blank" rel="noopener">GPL v2</a> | 
+        <a href="https://github.com/yourusername/riyazi-varzi" target="_blank" rel="noopener">GitHub Repository</a>
+    </footer>
+
+    <a href="https://mathing.ir" class="home-btn" title="بازگشت به صفحه اصلی" aria-label="Home">⌂</a>
+</body>
+</html>
